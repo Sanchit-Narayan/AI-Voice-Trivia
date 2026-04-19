@@ -56,7 +56,14 @@ def answer_question(question, context):
         f"Answer:"
     )
     result = qa_pipeline(prompt, max_new_tokens=100, min_length=5, do_sample=False)
-    return result[0]['generated_text'].strip()
+    answer = result[0]['generated_text'].strip()
+
+    # Return only the first sentence
+    first_sentence = answer.split('.')[0]
+    if first_sentence:
+        answer = first_sentence + '.'
+
+    return answer
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 
@@ -80,7 +87,7 @@ def ask():
         'question': question,
         'answer': answer,
         'confidence': round(score, 4),
-        'context_snippet': context[:300] + '...',
+        'context_snippet': context,
         'low_confidence': score < 0.3
     })
 
@@ -117,7 +124,7 @@ def ask_audio():
         'question': question,
         'answer': answer,
         'confidence': round(score, 4),
-        'context_snippet': context[:300] + '...',
+        'context_snippet': context,
         'low_confidence': score < 0.3
     })
 
